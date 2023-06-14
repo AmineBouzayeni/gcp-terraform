@@ -1,0 +1,25 @@
+[defaults]
+host_key_checking = False
+[cloud_user_p_32900374@ansible-vm gcp-terraform]$ cat systemd.yaml 
+---
+  - hosts: all
+    remote_user: ansible
+    become: yes
+    tasks:
+      - name: Install unzip
+        ansible.builtin.yum:
+          name: unzip
+          lock_timeout: 180
+      - name: Run bash command
+        ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+      - name:
+        ansible.builtin.yum:
+          name: nodejs
+          lock_timeout: 180
+      - name: Copy train-schedule file to /etc/systemd/system
+        ansible.builtin.copy:
+          src: /home/cloud_user_p_32900374/gcp-terraform/train-schedule.service
+          dest: /etc/systemd/system/train-schedule.service
+      - name: Daemon reload
+        ansible.builtin.systemd:
+          daemon_reload: true
