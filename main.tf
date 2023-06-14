@@ -73,7 +73,7 @@ resource "google_compute_instance" "staging-vm" {
   }
 
   # Install Ansible agent
-  metadata_startup_script = ""
+  metadata_startup_script = "sudo yum install ansible -y"
 
   network_interface {
     subnetwork = "default"
@@ -98,36 +98,9 @@ resource "google_compute_instance" "production-vm" {
       image = "centos-7"
     }
   }
-
+  
   # Install Ansible agent
-  metadata_startup_script = ""
-
-  network_interface {
-    subnetwork = "default"
-
-    access_config {
-      # Include this section to give the VM an external IP address
-    }
-  }
-}
-
-#Create an Ansible controller vm
-## TODOs: - Add project name
-##        - Add startup metadata script steps to install ansible controller
-resource "google_compute_instance" "ansible-vm" {
-  name         = "ansible-vm"
-  machine_type = "e2-medium"
-  zone         = "europe-west1-b"
-  tags         = ["ssh", "train"]
-
-  boot_disk {
-    initialize_params {
-      image = "centos-7"
-    }
-  }
-
-  # Install Ansible controller
-  metadata_startup_script = "sudo yum install ansible -y; sudo echo [ansible_client]; sudo ${google_compute_instance.network_interface.0.access_config.0.nat_ip} ansible_ssh_user=cloud_user ansible_ssh_pass=TODO"
+  metadata_startup_script = "sudo yum install ansible -y"
 
   network_interface {
     subnetwork = "default"
