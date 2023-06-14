@@ -1,2 +1,4 @@
 auth/
 .terraform/
+*tfstate
+*tfstate.backup
