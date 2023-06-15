@@ -2,7 +2,7 @@
 variable "gcp_auth_file" {
   type        = string
   description = "GCP authentication file"
-  default = "../auth/playground-s-11-cb9df2cf-920f6540b68c.json"
+  default = "../auth/playground-s-11-a45bf9d3-07b8de8dbbea.json"
 }
 # define GCP region
 variable "gcp_region" {
@@ -14,5 +14,5 @@ variable "gcp_region" {
 variable "gcp_project" {
   type        = string
   description = "GCP project name"
-  default     = "playground-s-11-cb9df2cf"
+  default     = "playground-s-11-a45bf9d3"
 }

@@ -1,5 +1,6 @@
 locals {
   private_key_path = "~/.ssh/id_ed25519"
+  ssh_user = "ansible"
 }
 # Create Jenkins firewall rule 
 ## TODOs: - Add project name
@@ -49,7 +50,7 @@ resource "google_compute_instance" "jenkins-vm" {
   }
 
   # Install Jenkins
-  metadata_startup_script = "set -xe; sudo yum -y install wget; sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo; sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key; sudo yum -y upgrade; sudo yum -y install java-11-openjdk; sudo yum -y install jenkins; sudo systemctl daemon-reload; sudo systemctl start jenkins"
+  metadata_startup_script = "set -xe; sudo yum -y install wget; sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo; sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key; sudo yum -y upgrade; sudo yum -y install java-11-openjdk; sudo yum -y install jenkins; sudo yum install git -y; sudo systemctl daemon-reload; sudo systemctl start jenkins"
 
   network_interface {
     subnetwork = "default"

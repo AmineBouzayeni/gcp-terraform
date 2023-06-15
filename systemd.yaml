@@ -23,3 +23,9 @@ host_key_checking = False
       - name: Daemon reload
         ansible.builtin.systemd:
           daemon_reload: true
+      - name: Add the user 'deploy' with a specific uid and a primary group of 'admin'
+        ansible.builtin.user:
+          name: deploy
+          password: $6$mysecretsalt$dzkUTqGoy0c3b.S7ABeyYpTV3brsYIAYZNMVF4KTW4FSSJe.fyvuu.oupiHOK0eu8.uANVmlAxYXU5LPfGhPQ/
+          comment: Deploy user
+          group: cloud_user_p_f6522f53    
