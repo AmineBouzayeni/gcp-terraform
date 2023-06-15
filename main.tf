@@ -1,3 +1,6 @@
+locals {
+  private_key_path = "~/.ssh/id_ed25519"
+}
 # Create Jenkins firewall rule 
 ## TODOs: - Add project name
 resource "google_compute_firewall" "jenkins" {
@@ -82,6 +85,20 @@ resource "google_compute_instance" "staging-vm" {
       # Include this section to give the VM an external IP address
     }
   }
+  provisioner "remote-exec" {
+    inline = ["echo 'Wait until SSH is ready'"]
+
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = self.network_interface.0.access_config.0.nat_ip
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i ${self.network_interface.0.access_config.0.nat_ip}, --private-key ${local.private_key_path} systemd.yaml"
+  }
 }
 
 #Create a production vm
@@ -108,5 +125,19 @@ resource "google_compute_instance" "production-vm" {
     access_config {
       # Include this section to give the VM an external IP address
     }
+  }
+  provisioner "remote-exec" {
+    inline = ["echo 'Wait until SSH is ready'"]
+
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = self.network_interface.0.access_config.0.nat_ip
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i ${self.network_interface.0.access_config.0.nat_ip}, --private-key ${local.private_key_path} systemd.yaml"
   }
 }
