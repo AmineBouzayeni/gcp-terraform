@@ -50,6 +50,9 @@ resource "google_compute_instance" "jenkins-vm" {
   }
 
   # Install Jenkins
+  ## TODOs: -Automate Publish Over SSH plugin install and configuration
+  ##        -Automate the config of Github Hooks
+  ##        -Automate the config the credentials 
   metadata_startup_script = "set -xe; sudo yum -y install wget; sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo; sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key; sudo yum -y upgrade; sudo yum -y install java-11-openjdk; sudo yum -y install jenkins; sudo yum install git -y; sudo systemctl daemon-reload; sudo systemctl start jenkins"
 
   network_interface {
