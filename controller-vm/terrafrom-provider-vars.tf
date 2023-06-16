@@ -14,5 +14,5 @@ variable "gcp_region" {
 variable "gcp_project" {
   type        = string
   description = "GCP project name"
-  default     = "playground-s-11-a45bf9d3"
+  default     = "playground-s-11-fbde1836"
 }

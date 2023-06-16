@@ -39,7 +39,7 @@ resource "google_compute_firewall" "train-app" {
 ## TODOs: - Add project name
 resource "google_compute_instance" "jenkins-vm" {
   name         = "jenkins-vm"
-  machine_type = "e2-medium"
+  machine_type = "e2-standard-8"
   zone         = "europe-west1-b"
   tags         = ["ssh", "jenkins"]
 
@@ -126,7 +126,7 @@ resource "google_compute_instance" "production-vm" {
   name         = "production-vm"
   machine_type = "e2-medium"
   zone         = "europe-west1-b"
-  tags         = ["ssh", "app"]
+  tags         = ["ssh", "jenkins"]
 
   boot_disk {
     initialize_params {
