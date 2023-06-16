@@ -49,11 +49,11 @@ resource "google_compute_instance" "jenkins-vm" {
     }
   }
 
-  # Install Jenkins
+  # Install Jenkins, Ansible
   ## TODOs: -Automate Publish Over SSH plugin install and configuration
   ##        -Automate the config of Github Hooks
   ##        -Automate the config the credentials 
-  metadata_startup_script = "set -xe; sudo yum -y install wget; sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo; sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key; sudo yum -y upgrade; sudo yum -y install java-11-openjdk; sudo yum -y install jenkins; sudo yum install git -y; sudo systemctl daemon-reload; sudo systemctl start jenkins"
+  metadata_startup_script = "sudo yum install ansible -y"
 
   network_interface {
     subnetwork = "default"
@@ -62,6 +62,20 @@ resource "google_compute_instance" "jenkins-vm" {
       # Include this section to give the VM an external IP address
     }
   }
+  provisioner "remote-exec" {
+    inline = ["echo 'Wait until SSH is ready'"]
+
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = self.network_interface.0.access_config.0.nat_ip
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i ${self.network_interface.0.access_config.0.nat_ip}, --private-key ${local.private_key_path} jenkins.yaml"
+  }  
 }
 
 # Create a production server

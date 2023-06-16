@@ -1,0 +1,57 @@
+---
+  - hosts: all
+    become: yes
+    remote_user: ansible
+    tasks:
+      - name: Install wget
+        ansible.builtin.yum:
+          name: wget
+          lock_timeout: 180
+      - name: Download jenkins repo & key
+        ansible.builtin.shell: sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo && sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+      - name: Upgrade
+        ansible.builtin.yum:
+          name: '*'
+          state: latest
+          lock_timeout: 180
+      - name: Install jdk 11
+        ansible.builtin.yum:
+          name: java-11-openjdk
+          lock_timeout: 180
+      - name: Install jenkins
+        ansible.builtin.yum:
+          name: jenkins
+          lock_timeout: 180
+      - name: Install git
+        ansible.builtin.yum:
+          name: git
+          lock_timeout: 180
+      - name: Daemon reload
+        ansible.builtin.systemd:
+          daemon_reload: true            
+      - name: Install docker
+        ansible.builtin.yum:
+          name: docker
+          lock_timeout: 180
+      - name: Start docker service  
+        ansible.builtin.systemd:
+          name: docker
+          state: started
+      - name: Enable docker service
+        ansible.builtin.systemd:
+          name: docker
+          enabled: true
+      - name: Create docker group
+        ansible.builtin.group:
+          name: docker
+          state: present
+          gid: 1750
+      - name: Restart jenkins service
+        ansible.builtin.systemd:
+          name: jenkins
+          state: restarted
+      - name: Restart docker service
+        ansible.builtin.systemd:
+          name: docker
+          state: restarted    
+
