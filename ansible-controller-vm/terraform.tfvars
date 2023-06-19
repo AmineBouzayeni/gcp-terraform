@@ -1,2 +1,2 @@
-gcp_auth_file = "../auth/playground-s-11-e7deedc7-7aa233c4086f.json"
-gcp_project = "playground-s-11-e7deedc7"
+gcp_auth_file = "../auth/playground-s-11-b02d1285-5ef1e823084f.json"
+gcp_project = "playground-s-11-b02d1285"
