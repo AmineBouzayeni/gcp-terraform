@@ -20,6 +20,31 @@
           name: docker
           state: present
           gid: 1750
+      - name: Install Git
+        ansible.builtin.yum:
+          name: git
+          lock_timeout: 180    
+      - name: Install CRI
+        ansible.builtin.shell: |
+          git clone https://github.com/Mirantis/cri-dockerd.git
+          cd cri-dockerd
+          make cri-dockerd
+          cd cri-dockerd
+          mkdir -p /usr/local/bin
+          install -o root -g root -m 0755 cri-dockerd /usr/local/bin/cri-dockerd
+          install packaging/systemd/* /etc/systemd/system
+          sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+      - name: Daemon reload
+        ansible.builtin.systemd:
+          daemon_reload: true
+      - name: Enable docker CRI service
+        ansible.builtin.systemd:
+          name: cri-docker.service
+          enabled: true
+      - name: Enable docker CRI socket
+        ansible.builtin.systemd:
+          name: cri-docker.socket
+          enabled: true    
       - name: Install kubeadm, kubectl & kubelet
         ansible.builtin.shell: |
           cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
