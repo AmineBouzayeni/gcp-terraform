@@ -1,0 +1,38 @@
+---
+  - hosts: all
+    remote_user: ansible
+    become: yes
+    tasks:
+      - name: Install docker
+        ansible.builtin.yum:
+          name: docker
+          lock_timeout: 180
+      - name: Start docker service
+        ansible.builtin.systemd:
+          name: docker
+          state: started
+      - name: Enable docker service
+        ansible.builtin.systemd:
+          name: docker
+          enabled: true
+      - name: Create docker group
+        ansible.builtin.group:
+          name: docker
+          state: present
+          gid: 1750
+      - name: Add the user 'deploy' with a specific uid and a primary group of 'admin'
+        ansible.builtin.user:
+          name: deploy
+          password: $6$mysecretsalt$dzkUTqGoy0c3b.S7ABeyYpTV3brsYIAYZNMVF4KTW4FSSJe.fyvuu.oupiHOK0eu8.uANVmlAxYXU5LPfGhPQ/
+          comment: Deploy user
+          group: google-sudoers, docker    
+      - name: Ensure SELinux is set to enforcing mode
+        ansible.builtin.lineinfile:
+          path: /etc/ssh/sshd_config 
+          regexp: 'PasswordAuthentication no' 
+          line: 'PasswordAuthentication yes'
+          backrefs: yes
+      - name: Restart sshd service
+        ansible.builtin.systemd:
+          name: sshd
+          state: restarted

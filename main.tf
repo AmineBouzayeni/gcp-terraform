@@ -39,7 +39,7 @@ resource "google_compute_firewall" "train-app" {
 ## TODOs: - Add project name
 resource "google_compute_instance" "jenkins-vm" {
   name         = "jenkins-vm"
-  machine_type = "e2-standard-8"
+  machine_type = "e2-medium"
   zone         = "europe-west1-b"
   tags         = ["ssh", "jenkins"]
 
