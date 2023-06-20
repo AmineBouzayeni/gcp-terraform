@@ -3,10 +3,25 @@
     remote_user: ansible
     become: yes
     tasks:
-      - name: Install docker
+      - name: Install yum utils
         ansible.builtin.yum:
-          name: docker
+          name: yum-utils
+          state: latest
           lock_timeout: 180
+      - name: Add docker-ce repo
+        ansible.builtin.yum_repository module:
+          name: docker-ce.repo
+          baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+      - name: Install docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin
+        ansible.builtin.yum:
+          name:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+          lock_timeout: 180
+          state: present        
       - name: Start docker service
         ansible.builtin.systemd:
           name: docker
@@ -20,31 +35,25 @@
           name: docker
           state: present
           gid: 1750
+      - name: Install wget
+        ansible.builtin.yum:
+          name: wget
+          lock_timeout: 180
+          state: present
+      - name: Upgrade containerd
+        ansible.builtin.shell: |
+          wget https://github.com/containerd/containerd/releases/download/v1.6.12/containerd-1.6.12-linux-amd64.tar.gz
+          tar xvf containerd-1.6.12-linux-amd64.tar.gz
+          systemctl stop containerd
+          cd bin
+          cp * /usr/bin/
+          mv /etc/containerd/config.tom ~/
+          systemctl start containerd
       - name: Install Git
         ansible.builtin.yum:
           name: git
-          lock_timeout: 180    
-      - name: Install CRI
-        ansible.builtin.shell: |
-          git clone https://github.com/Mirantis/cri-dockerd.git
-          cd cri-dockerd
-          make cri-dockerd
-          cd cri-dockerd
-          mkdir -p /usr/local/bin
-          install -o root -g root -m 0755 cri-dockerd /usr/local/bin/cri-dockerd
-          install packaging/systemd/* /etc/systemd/system
-          sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
-      - name: Daemon reload
-        ansible.builtin.systemd:
-          daemon_reload: true
-      - name: Enable docker CRI service
-        ansible.builtin.systemd:
-          name: cri-docker.service
-          enabled: true
-      - name: Enable docker CRI socket
-        ansible.builtin.systemd:
-          name: cri-docker.socket
-          enabled: true    
+          lock_timeout: 180
+          yum: present        
       - name: Install kubeadm, kubectl & kubelet
         ansible.builtin.shell: |
           cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
