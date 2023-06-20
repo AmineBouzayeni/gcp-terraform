@@ -9,9 +9,7 @@
           state: latest
           lock_timeout: 180
       - name: Add docker-ce repo
-        ansible.builtin.yum_repository module:
-          name: docker-ce.repo
-          baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+        ansible.builtin.shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo 
       - name: Install docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin
         ansible.builtin.yum:
           name:
@@ -53,7 +51,7 @@
         ansible.builtin.yum:
           name: git
           lock_timeout: 180
-          yum: present        
+          state: present        
       - name: Install kubeadm, kubectl & kubelet
         ansible.builtin.shell: |
           cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
