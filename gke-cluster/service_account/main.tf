@@ -35,7 +35,7 @@ resource "google_service_account_iam_binding" "project" {
   role    = "roles/iam.workloadIdentityUser"
   service_account_id = "projects/playground-s-11-73e7618a/serviceAccounts/playground-s-11-73e7618a@playground-s-11-73e7618a.iam.gserviceaccount.com"
   members = [
-    "principal://iam.googleapis.com/projects/733491029074/locations/global/workloadIdentityPools/github-actions/subject/mbouzayeni/cicd-pipeline-train-schedule-kubernetes-gke:refs/heads/main",
+    "principal://iam.googleapis.com/projects/733491029074/locations/global/workloadIdentityPools/github-actions/subject/repo:AmineBouzayeni/cicd-pipeline-train-schedule-kubernetes-gke:ref:refs/heads/main",
   ]
 }
 
