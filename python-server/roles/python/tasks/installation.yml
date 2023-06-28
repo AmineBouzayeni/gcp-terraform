@@ -1,0 +1,11 @@
+---
+- name: Unarchive python tar
+  unarchive:
+    src: http://python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz
+    dest: /usr/src
+    remote_src: yes
+- name: Install Python
+  shell: |
+    cd /usr/src/Python-3.7.2
+    ./configure --enable-optimization
+    make altinstall
